@@ -4,17 +4,11 @@ import Link from "next/link";
 import { api } from "~/utils/api";
 
 export default function Home() {
-  const latestPost = api.post.getLatest.useQuery();
-  const createPostMutation = api.post.create.useMutation({
-    onSuccess: () => {
-      latestPost.refetch();
-    },
-  });
-  const createPost = () => {
-    createPostMutation.mutate({
-      name: `New Post!`,
-    });
-  };
+  const {data: user} = api.user.getLatest.useQuery()
+  
+  if(!user){
+    return <span>loading...</span>
+  }
 
   return (
     <>
@@ -25,18 +19,12 @@ export default function Home() {
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-          <button
-            type="button"
-            className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-            onClick={createPost}
-          >
-            Create Post
-          </button>
+        
           <p className="">
-            Latest Post:
-            {latestPost.data && (
+            Latest user:
+            {user && (
               <span>
-                {`${latestPost.data.name}, Created: ${latestPost.data.createdAt.toString()}`}
+                {`${user.name}, Created: ${user.createdAt.toString()}`}
               </span>
             )}
           </p>
